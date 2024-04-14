@@ -1,92 +1,119 @@
 import { Helmet } from '@modern-js/runtime/head';
-import './index.css';
+import { useAnime, useGenres, useStudios } from '@/api/query';
+import { Table } from '@/components/table';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { useMemo } from 'react';
+import { AnimeCsv } from '@/api/api';
 
-const Index = () => (
-  <div className="container-box">
-    <Helmet>
-      <link
-        rel="icon"
-        type="image/x-icon"
-        href="https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupenuhf/favicon.ico"
-      />
-    </Helmet>
-    <main>
-      <div className="title">
-        Welcome to
-        <img
-          className="logo"
-          src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/modern-js-logo.svg"
-          alt="Modern.js Logo"
+const columnHelper = createColumnHelper<AnimeCsv>();
+
+export default function Index() {
+  const { data: anime } = useAnime();
+  const { data: genres } = useGenres();
+  const { data: studios } = useStudios();
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('id', {
+        header: 'ID',
+      }),
+      columnHelper.accessor('title', {
+        header: 'Title',
+      }),
+      columnHelper.accessor('titleJa', {
+        header: 'Title (JA)',
+      }),
+      columnHelper.accessor('titleEn', {
+        header: 'Title (EN)',
+      }),
+      columnHelper.accessor('image', {
+        header: 'Image',
+        cell: item => (
+          <img
+            style={{ width: 50, height: 50, objectFit: 'cover' }}
+            src={`https://cdn.myanimelist.net/images/anime/${item.getValue()}.jpg`}
+          />
+        ),
+      }),
+      columnHelper.accessor('mean', {
+        header: 'Mean',
+      }),
+      columnHelper.accessor('num_list_users', {
+        header: 'Num list users',
+      }),
+      columnHelper.accessor('num_scoring_users', {
+        header: 'Num scoring users',
+      }),
+      columnHelper.accessor('num_episodes', {
+        header: 'Num episodes',
+      }),
+      columnHelper.accessor('start_date', {
+        header: 'Start date',
+      }),
+      columnHelper.accessor('end_date', {
+        header: 'End date',
+      }),
+      columnHelper.accessor('media_type', {
+        header: 'Media type',
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+      }),
+      columnHelper.accessor('rating', {
+        header: 'Rating',
+      }),
+      columnHelper.accessor('average_episode_duration', {
+        header: 'Average episode duration',
+      }),
+      columnHelper.accessor('genres', {
+        header: 'Genres',
+        cell: item => {
+          const genreIds = item.getValue()?.split(',') ?? [];
+          return genreIds
+            .map(genreId => genres?.find(genre => genre.id === genreId)?.name)
+            .join(', ');
+        },
+      }),
+      columnHelper.accessor('studios', {
+        header: 'Studios',
+        cell: item => {
+          const studioIds = item.getValue()?.split(';') ?? [];
+          return studioIds
+            .map(
+              studioId => studios?.find(studio => studio.id === studioId)?.name,
+            )
+            .join(', ');
+        },
+      }),
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data: anime ?? [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
+  return (
+    <div className="container-box">
+      <Helmet>
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href="https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupenuhf/favicon.ico"
         />
-        <p className="name">Modern.js</p>
-      </div>
-      <p className="description">
-        Get started by editing <code className="code">src/routes/page.tsx</code>
-      </p>
-      <div className="grid">
-        <a
-          href="https://modernjs.dev/guides/get-started/introduction.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card"
-        >
-          <h2>
-            Guide
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-            />
-          </h2>
-          <p>Follow the guides to use all features of Modern.js.</p>
-        </a>
-        <a
-          href="https://modernjs.dev/tutorials/foundations/introduction.html"
-          target="_blank"
-          className="card"
-          rel="noreferrer"
-        >
-          <h2>
-            Tutorials
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-            />
-          </h2>
-          <p>Learn to use Modern.js to create your first application.</p>
-        </a>
-        <a
-          href="https://modernjs.dev/configure/app/usage.html"
-          target="_blank"
-          className="card"
-          rel="noreferrer"
-        >
-          <h2>
-            Config
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-            />
-          </h2>
-          <p>Find all configuration options provided by Modern.js.</p>
-        </a>
-        <a
-          href="https://github.com/web-infra-dev/modern.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card"
-        >
-          <h2>
-            Github
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-            />
-          </h2>
-          <p>View the source code of Github, feel free to contribute.</p>
-        </a>
-      </div>
-    </main>
-  </div>
-);
-
-export default Index;
+        <title>My page title</title>
+      </Helmet>
+      <main>
+        <Table table={table}></Table>
+      </main>
+    </div>
+  );
+}
