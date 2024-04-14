@@ -1,4 +1,3 @@
-import { Helmet } from "@modern-js/runtime/head";
 import { useAnime, useGenres, useStudios } from "./api/query";
 import { Table } from "./components/table";
 import {
@@ -141,9 +140,6 @@ export default function App() {
 
   return (
     <div className="container-box">
-      <Helmet>
-        <title>Anime Table</title>
-      </Helmet>
       <main>
         <Table table={table}></Table>
       </main>
