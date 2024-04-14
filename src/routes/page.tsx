@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { Children, useMemo } from 'react';
 import { AnimeCsv } from '@/api/api';
 
 const columnHelper = createColumnHelper<AnimeCsv>();
@@ -21,9 +21,25 @@ export default function Index() {
     () => [
       columnHelper.accessor('id', {
         header: 'ID',
+        cell: item => (
+          <a
+            href={`https://myanimelist.net/anime/${item.getValue()}`}
+            target="_blank"
+          >
+            {item.getValue()}
+          </a>
+        ),
       }),
       columnHelper.accessor('title', {
         header: 'Title',
+        cell: item => (
+          <a
+            href={`https://myanimelist.net/anime/${item.row.original.id}`}
+            target="_blank"
+          >
+            {item.getValue()}
+          </a>
+        ),
       }),
       columnHelper.accessor('titleJa', {
         header: 'Title (JA)',
@@ -33,12 +49,13 @@ export default function Index() {
       }),
       columnHelper.accessor('image', {
         header: 'Image',
-        cell: item => (
-          <img
-            style={{ width: 50, height: 50, objectFit: 'cover' }}
-            src={`https://cdn.myanimelist.net/images/anime/${item.getValue()}.jpg`}
-          />
-        ),
+        cell: item =>
+          item.getValue() ? (
+            <img
+              style={{ width: 50, height: 50, objectFit: 'cover' }}
+              src={`https://cdn.myanimelist.net/images/anime/${item.getValue()}.jpg`}
+            />
+          ) : null,
       }),
       columnHelper.accessor('mean', {
         header: 'Mean',
@@ -69,6 +86,12 @@ export default function Index() {
       }),
       columnHelper.accessor('average_episode_duration', {
         header: 'Average episode duration',
+        cell: item => {
+          const duration_minutes = Number(item.getValue());
+          return `${Math.floor(duration_minutes / 60)}:${String(
+            duration_minutes % 60,
+          ).padStart(2, '0')}`;
+        },
       }),
       columnHelper.accessor('genres', {
         header: 'Genres',
@@ -87,7 +110,19 @@ export default function Index() {
             .map(
               studioId => studios?.find(studio => studio.id === studioId)?.name,
             )
-            .join(', ');
+            .map((studio, index) => (
+              <a
+                href={`https://myanimelist.net/anime/producer/${studioIds[index]}`}
+                target="_blank"
+              >
+                {studio}
+              </a>
+            ))
+            .reduce((prev, curr) => (
+              <>
+                {prev}, {curr}
+              </>
+            ));
         },
       }),
     ],
@@ -104,12 +139,7 @@ export default function Index() {
   return (
     <div className="container-box">
       <Helmet>
-        <link
-          rel="icon"
-          type="image/x-icon"
-          href="https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupenuhf/favicon.ico"
-        />
-        <title>My page title</title>
+        <title>Anime Table</title>
       </Helmet>
       <main>
         <Table table={table}></Table>
