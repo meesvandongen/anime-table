@@ -231,8 +231,9 @@ export default function App() {
     },
 
     renderTopToolbarCustomActions: () => (
-      <Tooltip label={"Github"} withinPortal style={{ marginRight: "auto" }}>
+      <Tooltip label={"Github"} withinPortal>
         <ActionIcon
+          style={{ marginRight: "auto" }}
           color="gray"
           size="lg"
           variant="subtle"
