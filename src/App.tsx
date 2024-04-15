@@ -4,8 +4,10 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef,
 } from "mantine-react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Anime } from "./api/api";
+import { ActionIcon, Tooltip } from "@mantine/core";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 export default function App() {
   const { data: anime, isLoading: isAnimeLoading } = useAnime();
@@ -227,6 +229,21 @@ export default function App() {
         height: "100%",
       },
     },
+
+    renderTopToolbarCustomActions: () => (
+      <Tooltip label={"Github"} withinPortal style={{ marginRight: "auto" }}>
+        <ActionIcon
+          color="gray"
+          size="lg"
+          variant="subtle"
+          component="a"
+          href="https://github.com/meesvandongen/anime-table"
+          target="_blank"
+        >
+          <IconBrandGithub />
+        </ActionIcon>
+      </Tooltip>
+    ),
   });
 
   return (
