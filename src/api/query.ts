@@ -1,25 +1,25 @@
-import { QueryClient, useQuery } from '@tanstack/react-query';
-import { getAnime, getGenres, getStudios } from './api';
+import { QueryClient, useQueries, useQuery } from "@tanstack/react-query";
+import { getAnime, getGenres, getStudios } from "./api";
 
 export const queryClient = new QueryClient();
 
 export function useAnime() {
   return useQuery({
-    queryKey: ['anime'],
+    queryKey: ["anime"],
     queryFn: getAnime,
   });
 }
 
 export function useGenres() {
   return useQuery({
-    queryKey: ['genres'],
+    queryKey: ["genres"],
     queryFn: getGenres,
   });
 }
 
 export function useStudios() {
   return useQuery({
-    queryKey: ['studios'],
+    queryKey: ["studios"],
     queryFn: getStudios,
   });
 }

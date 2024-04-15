@@ -1,147 +1,233 @@
 import { useAnime, useGenres, useStudios } from "./api/query";
-import { Table } from "./components/table";
 import {
-  createColumnHelper,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useMemo } from "react";
-import { AnimeCsv } from "./api/api";
-
-const columnHelper = createColumnHelper<AnimeCsv>();
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef,
+} from "mantine-react-table";
+import { useMemo, useState } from "react";
+import { Anime } from "./api/api";
 
 export default function App() {
-  const { data: anime } = useAnime();
-  const { data: genres } = useGenres();
-  const { data: studios } = useStudios();
+  const { data: anime, isLoading: isAnimeLoading } = useAnime();
+  const { data: genres, isLoading: isGenresLoading } = useGenres();
+  const { data: studios, isLoading: isStudiosLoading } = useStudios();
 
-  const columns = useMemo(
+  const columns = useMemo<MRT_ColumnDef<Anime>[]>(
     () => [
-      columnHelper.accessor("id", {
-        header: "ID",
-        cell: (item) => (
-          <a
-            href={`https://myanimelist.net/anime/${item.getValue()}`}
-            target="_blank"
-          >
-            {item.getValue()}
-          </a>
-        ),
-      }),
-      columnHelper.accessor("title", {
+      {
+        accessorKey: "title",
         header: "Title",
-        cell: (item) => (
+        size: 400,
+        Cell: ({ renderedCellValue, row }) => (
           <a
-            href={`https://myanimelist.net/anime/${item.row.original.id}`}
+            href={`https://myanimelist.net/anime/${row.original.id}`}
             target="_blank"
           >
-            {item.getValue()}
+            {renderedCellValue}
           </a>
         ),
-      }),
-      columnHelper.accessor("titleJa", {
+      },
+      {
+        accessorKey: "titleJa",
         header: "Title (JA)",
-      }),
-      columnHelper.accessor("titleEn", {
+        size: 400,
+      },
+      {
+        accessorKey: "titleEn",
         header: "Title (EN)",
-      }),
-      columnHelper.accessor("image", {
+        size: 400,
+      },
+      {
+        accessorKey: "image",
         header: "Image",
-        cell: (item) =>
-          item.getValue() ? (
+        Cell: ({ row }) =>
+          row.original.image ? (
             <img
               style={{ width: 50, height: 50, objectFit: "cover" }}
-              src={`https://cdn.myanimelist.net/images/anime/${item.getValue()}.jpg`}
+              src={`https://cdn.myanimelist.net/images/anime/${row.original.image}.jpg`}
             />
           ) : null,
-      }),
-      columnHelper.accessor("mean", {
+        enableColumnFilter: false,
+      },
+      {
+        accessorKey: "mean",
         header: "Mean",
-      }),
-      columnHelper.accessor("num_list_users", {
+        filterVariant: "range",
+      },
+      {
+        accessorKey: "num_list_users",
         header: "Num list users",
-      }),
-      columnHelper.accessor("num_scoring_users", {
+        filterVariant: "range",
+      },
+      {
+        accessorKey: "num_scoring_users",
         header: "Num scoring users",
-      }),
-      columnHelper.accessor("num_episodes", {
+        filterVariant: "range",
+      },
+      {
+        accessorKey: "num_episodes",
         header: "Num episodes",
-      }),
-      columnHelper.accessor("start_date", {
+        filterVariant: "range",
+      },
+      {
+        id: "start_date",
         header: "Start date",
-      }),
-      columnHelper.accessor("end_date", {
+        accessorFn: (row) => {
+          return new Date(row.start_date);
+        },
+        filterVariant: "date-range",
+        sortingFn: "datetime",
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(),
+      },
+      {
+        accessorKey: "end_date",
         header: "End date",
-      }),
-      columnHelper.accessor("media_type", {
+        accessorFn: (row) => {
+          return row.end_date ? new Date(row.end_date) : undefined;
+        },
+        filterVariant: "date-range",
+        sortingFn: "datetime",
+        Cell: ({ cell }) => {
+          return cell.getValue<Date>()?.toLocaleDateString();
+        },
+      },
+      {
+        accessorKey: "media_type",
         header: "Media type",
-      }),
-      columnHelper.accessor("status", {
+        filterVariant: "multi-select",
+      },
+      {
+        accessorKey: "status",
         header: "Status",
-      }),
-      columnHelper.accessor("rating", {
+        filterVariant: "multi-select",
+      },
+      {
+        accessorKey: "rating",
         header: "Rating",
-      }),
-      columnHelper.accessor("average_episode_duration", {
+        filterVariant: "multi-select",
+        filterFn: "arrIncludes",
+      },
+      {
+        accessorKey: "average_episode_duration",
         header: "Average episode duration",
-        cell: (item) => {
-          const duration_minutes = Number(item.getValue());
+        Cell: ({ renderedCellValue }) => {
+          const duration_minutes = Number(renderedCellValue);
           return `${Math.floor(duration_minutes / 60)}:${String(
             duration_minutes % 60
           ).padStart(2, "0")}`;
         },
-      }),
-      columnHelper.accessor("genres", {
+      },
+      {
+        accessorKey: "genres",
         header: "Genres",
-        cell: (item) => {
-          const genreIds = item.getValue()?.split(",") ?? [];
-          return genreIds
+        accessorFn: (row) =>
+          (
+            row.genres?.map(
+              (genreId) =>
+                genres?.find((genre) => genre.id === genreId)?.name ?? ""
+            ) ?? []
+          ).join(";"),
+        Cell: ({ row }) => {
+          return row.original.genres
             .map(
               (genreId) => genres?.find((genre) => genre.id === genreId)?.name
             )
             .join(", ");
         },
-      }),
-      columnHelper.accessor("studios", {
-        header: "Studios",
-        cell: (item) => {
-          const studioIds = item.getValue()?.split(";") ?? [];
-          return studioIds
-            .map(
+        size: 500,
+      },
+      {
+        accessorKey: "studios",
+        id: "studios",
+        accessorFn: (row) =>
+          (
+            row.studios?.map(
               (studioId) =>
-                studios?.find((studio) => studio.id === studioId)?.name
-            )
-            .map((studio, index) => (
-              <a
-                href={`https://myanimelist.net/anime/producer/${studioIds[index]}`}
-                target="_blank"
-              >
-                {studio}
-              </a>
-            ))
-            .reduce((prev, curr) => (
-              <>
-                {prev}, {curr}
-              </>
-            ));
+                studios?.find((studio) => studio.id === studioId)?.name ?? ""
+            ) ?? []
+          ).join(", "),
+        header: "Studios",
+        filterFn: "contains",
+        size: 500,
+        Cell: ({ row }) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "0.5rem",
+              }}
+            >
+              {row.original.studios.map((studioId, index) => {
+                const studio = studios?.find(
+                  (studio) => studio.id === studioId
+                );
+                if (!studio) {
+                  return null;
+                }
+                return (
+                  <a
+                    href={`https://myanimelist.net/anime/producer/${studio.id}`}
+                    target="_blank"
+                  >
+                    {studio.name}
+                  </a>
+                );
+              })}
+            </div>
+          );
         },
-      }),
+      },
+      {
+        accessorKey: "id",
+        header: "ID",
+      },
     ],
     [studios, genres]
   );
 
-  const table = useReactTable({
+  const table = useMantineReactTable({
     data: anime ?? [],
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    state: {
+      isLoading: isAnimeLoading || isGenresLoading || isStudiosLoading,
+      density: "xs",
+    },
+    initialState: {
+      showColumnFilters: true,
+      columnPinning: {
+        left: ["title"],
+      },
+    },
+    enableDensityToggle: false,
+    enablePagination: false,
+    enableBottomToolbar: false,
+    enableFullScreenToggle: false,
+
+    enableRowVirtualization: true,
+    enableStickyHeader: true,
+    enableColumnDragging: true,
+    enableColumnOrdering: true,
+    enableColumnPinning: true,
+    enableFacetedValues: true,
+
+    mantinePaperProps: {
+      withBorder: false,
+      style: {
+        height: "100vh",
+      },
+    },
+    mantineTableContainerProps: {
+      style: {
+        height: "100%",
+      },
+    },
   });
 
   return (
-    <div className="container-box">
+    <div>
       <main>
-        <Table table={table}></Table>
+        <MantineReactTable table={table}></MantineReactTable>
       </main>
     </div>
   );

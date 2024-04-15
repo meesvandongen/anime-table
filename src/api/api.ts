@@ -1,4 +1,4 @@
-import { parse } from 'papaparse';
+import { parse } from "papaparse";
 
 export interface AnimeCsv {
   id: string;
@@ -11,7 +11,7 @@ export interface AnimeCsv {
   num_scoring_users: string;
   num_episodes: string;
   start_date: string;
-  end_date: string;
+  end_date: string | undefined;
   media_type: string;
   status: string;
   rating: string;
@@ -20,12 +20,43 @@ export interface AnimeCsv {
   studios: string;
 }
 
+export interface Anime {
+  id: string;
+  title: string;
+  titleJa: string;
+  titleEn: string;
+  image: string;
+  mean: number;
+  num_list_users: number;
+  num_scoring_users: number;
+  num_episodes: number;
+  start_date: string;
+  end_date: string | undefined;
+  media_type: string;
+  status: string;
+  rating: string;
+  average_episode_duration: number;
+  genres: string[];
+  studios: string[];
+}
+
 export async function getAnime() {
   const res = await fetch(
-    'https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/anime.csv',
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/anime.csv"
   );
   const text = await res.text();
-  return parse<AnimeCsv>(text, { header: true, skipEmptyLines: true }).data;
+  return parse<AnimeCsv>(text, { header: true, skipEmptyLines: true }).data.map(
+    (anime): Anime => ({
+      ...anime,
+      genres: anime.genres.split(";"),
+      studios: anime.studios.split(";"),
+      mean: anime.mean ? Number(anime.mean) : 0,
+      num_episodes: Number(anime.num_episodes),
+      num_list_users: Number(anime.num_list_users),
+      average_episode_duration: Number(anime.average_episode_duration),
+      num_scoring_users: Number(anime.num_scoring_users),
+    })
+  );
 }
 
 export interface GenreCsv {
@@ -35,7 +66,7 @@ export interface GenreCsv {
 
 export async function getGenres() {
   const res = await fetch(
-    'https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/genres.csv',
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/genres.csv"
   );
   const text = await res.text();
   return parse<GenreCsv>(text, { header: true, skipEmptyLines: true }).data;
@@ -48,7 +79,7 @@ export interface StudioCsv {
 
 export async function getStudios() {
   const res = await fetch(
-    'https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/studios.csv',
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/studios.csv"
   );
   const text = await res.text();
   return parse<StudioCsv>(text, { header: true, skipEmptyLines: true }).data;
