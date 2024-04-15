@@ -195,10 +195,12 @@ export default function App() {
     },
     initialState: {
       showColumnFilters: true,
+      showGlobalFilter: true,
       columnPinning: {
         left: ["title"],
       },
     },
+    positionGlobalFilter: "left",
     enableDensityToggle: false,
     enablePagination: false,
     enableBottomToolbar: false,
@@ -210,6 +212,8 @@ export default function App() {
     enableColumnOrdering: true,
     enableColumnPinning: true,
     enableFacetedValues: true,
+    enableColumnFilterModes: true,
+    enableGlobalFilterModes: true,
 
     mantinePaperProps: {
       withBorder: false,
@@ -225,10 +229,8 @@ export default function App() {
   });
 
   return (
-    <div>
-      <main>
-        <MantineReactTable table={table}></MantineReactTable>
-      </main>
-    </div>
+    <main>
+      <MantineReactTable table={table}></MantineReactTable>
+    </main>
   );
 }
