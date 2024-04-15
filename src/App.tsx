@@ -197,7 +197,8 @@ export default function App() {
       showColumnFilters: true,
       showGlobalFilter: true,
       columnPinning: {
-        left: ["title"],
+        // window.innerWidth < 768
+        left: window.innerWidth < 768 ? [] : ["title"],
       },
     },
     positionGlobalFilter: "left",
