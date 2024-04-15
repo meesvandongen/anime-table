@@ -128,7 +128,7 @@ export default function App() {
         },
       }),
     ],
-    []
+    [studios, genres]
   );
 
   const table = useReactTable({
