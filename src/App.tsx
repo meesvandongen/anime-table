@@ -6,8 +6,7 @@ import {
 } from "mantine-react-table";
 import { useMemo } from "react";
 import { Anime } from "./api/api";
-import { ActionIcon, Tooltip } from "@mantine/core";
-import { IconBrandGithub } from "@tabler/icons-react";
+import { MainMenu } from "./components/main-menu";
 
 export default function App() {
   const { data: anime, isLoading: isAnimeLoading } = useAnime();
@@ -230,21 +229,7 @@ export default function App() {
       },
     },
 
-    renderTopToolbarCustomActions: () => (
-      <Tooltip label={"Github"} withinPortal>
-        <ActionIcon
-          style={{ marginRight: "auto" }}
-          color="gray"
-          size="lg"
-          variant="subtle"
-          component="a"
-          href="https://github.com/meesvandongen/anime-table"
-          target="_blank"
-        >
-          <IconBrandGithub />
-        </ActionIcon>
-      </Tooltip>
-    ),
+    renderTopToolbarCustomActions: () => <MainMenu />,
   });
 
   return (

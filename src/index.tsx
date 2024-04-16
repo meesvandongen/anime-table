@@ -14,7 +14,7 @@ import { MantineProvider } from "@mantine/core";
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   <React.StrictMode>
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="auto">
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
