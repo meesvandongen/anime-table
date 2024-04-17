@@ -57,7 +57,7 @@ export async function getAnime() {
       num_list_users: Number(anime.num_list_users),
       average_episode_duration: Number(anime.average_episode_duration),
       num_scoring_users: Number(anime.num_scoring_users),
-      rank: Number(anime.rank),
+      rank: Number(anime.rank || 99_999),
     })
   );
 }
