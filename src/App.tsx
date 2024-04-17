@@ -84,13 +84,11 @@ export default function App() {
         accessorKey: "end_date",
         header: "End date",
         accessorFn: (row) => {
-          return row.end_date ? new Date(row.end_date) : undefined;
+          return new Date(row.end_date || "2999");
         },
         filterVariant: "date-range",
         sortingFn: "datetime",
-        Cell: ({ cell }) => {
-          return cell.getValue<Date>()?.toLocaleDateString();
-        },
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(),
       },
       {
         accessorKey: "media_type",
@@ -170,6 +168,7 @@ export default function App() {
                   <a
                     href={`https://myanimelist.net/anime/producer/${studio.id}`}
                     target="_blank"
+                    key={studioId}
                   >
                     {studio.name}
                   </a>
