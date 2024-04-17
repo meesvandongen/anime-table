@@ -8,7 +8,7 @@ export default defineConfig({
     favicon: "./src/assets/ayaya.png",
     meta: {
       description:
-        "A table containing all Anime from the MyAnimeList API, easily filterable and sortable.",
+        "A table containing all Anime from MyAnimeList, easily filterable and sortable.",
     },
   },
 });
