@@ -56,6 +56,10 @@ export default function App() {
         filterVariant: "range",
       },
       {
+        accessorKey: "rank",
+        header: "Rank",
+      },
+      {
         accessorKey: "num_list_users",
         header: "Num list users",
         filterVariant: "range",
@@ -78,7 +82,7 @@ export default function App() {
         },
         filterVariant: "date-range",
         sortingFn: "datetime",
-        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(),
+        Cell: ({ cell }) => cell.getValue<Date>().toLocaleDateString(),
       },
       {
         accessorKey: "end_date",
@@ -88,7 +92,7 @@ export default function App() {
         },
         filterVariant: "date-range",
         sortingFn: "datetime",
-        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(),
+        Cell: ({ cell }) => cell.getValue<Date>().toLocaleDateString(),
       },
       {
         accessorKey: "media_type",
@@ -117,7 +121,6 @@ export default function App() {
         },
       },
       {
-        accessorKey: "genres",
         header: "Genres",
         accessorFn: (row) =>
           (
@@ -136,7 +139,6 @@ export default function App() {
         size: 500,
       },
       {
-        accessorKey: "studios",
         id: "studios",
         accessorFn: (row) =>
           (
@@ -215,6 +217,7 @@ export default function App() {
     enableFacetedValues: true,
     enableColumnFilterModes: true,
     enableGlobalFilterModes: true,
+    enableGrouping: true,
 
     mantinePaperProps: {
       withBorder: false,

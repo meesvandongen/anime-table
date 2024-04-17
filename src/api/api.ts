@@ -7,6 +7,7 @@ export interface AnimeCsv {
   titleEn: string;
   image: string;
   mean: string;
+  rank: string;
   num_list_users: string;
   num_scoring_users: string;
   num_episodes: string;
@@ -27,6 +28,7 @@ export interface Anime {
   titleEn: string;
   image: string;
   mean: number;
+  rank: number;
   num_list_users: number;
   num_scoring_users: number;
   num_episodes: number;
@@ -48,13 +50,14 @@ export async function getAnime() {
   return parse<AnimeCsv>(text, { header: true, skipEmptyLines: true }).data.map(
     (anime): Anime => ({
       ...anime,
-      genres: anime.genres.split(";"),
-      studios: anime.studios.split(";"),
+      genres: anime.genres?.split(";") ?? [],
+      studios: anime.studios?.split(";") ?? [],
       mean: anime.mean ? Number(anime.mean) : 0,
       num_episodes: Number(anime.num_episodes),
       num_list_users: Number(anime.num_list_users),
       average_episode_duration: Number(anime.average_episode_duration),
       num_scoring_users: Number(anime.num_scoring_users),
+      rank: Number(anime.rank),
     })
   );
 }
