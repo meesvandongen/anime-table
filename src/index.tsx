@@ -19,5 +19,5 @@ root.render(
         <App />
       </QueryClientProvider>
     </MantineProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

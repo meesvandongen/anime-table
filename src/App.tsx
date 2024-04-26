@@ -1,4 +1,4 @@
-import { useAnime, useGenres, useStudios } from "./api/query";
+import { useAnime, useGenres, useStudios, useUserAnime } from "./api/query";
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -7,11 +7,95 @@ import {
 import { useMemo } from "react";
 import { Anime } from "./api/api";
 import { MainMenu } from "./components/main-menu";
+import { Anchor } from "@mantine/core";
+import { getIsLoggedIn } from "./utils";
 
 export default function App() {
   const { data: anime, isLoading: isAnimeLoading } = useAnime();
   const { data: genres, isLoading: isGenresLoading } = useGenres();
   const { data: studios, isLoading: isStudiosLoading } = useStudios();
+
+  const isLoggedIn = getIsLoggedIn();
+
+  const { data: userAnime, isLoading: isUserAnimeLoading } =
+    useUserAnime(isLoggedIn);
+
+  console.log(isUserAnimeLoading, userAnime);
+
+  const userColumns = useMemo<MRT_ColumnDef<Anime>[]>(() => {
+    if (!isLoggedIn) {
+      return [];
+    }
+
+    if (isUserAnimeLoading) {
+      return [];
+    }
+
+    if (!userAnime) {
+      return [];
+    }
+
+    return [
+      {
+        id: "user_score",
+        header: "User score",
+        sortingFn: "basic",
+        sortUndefined: -1,
+        accessorFn: (row) => {
+          const myAnime = userAnime[row.id];
+          return myAnime?.score;
+        },
+      },
+      {
+        id: "user_finish_date",
+        header: "Finish date",
+        accessorFn: (row) => {
+          const myAnime = userAnime[row.id];
+          return myAnime?.finish_date;
+        },
+      },
+      {
+        id: "user_status",
+        header: "User status",
+        accessorFn: (row) => {
+          const myAnime = userAnime[row.id];
+          return myAnime?.status;
+        },
+      },
+      {
+        id: "user_num_episodes_watched",
+        header: "Episodes watched",
+        sortingFn: "basic",
+        sortUndefined: -1,
+        accessorFn: (row) => {
+          const myAnime = userAnime[row.id];
+          return myAnime?.num_episodes_watched;
+        },
+      },
+      {
+        id: "user_score_diff",
+        header: "Score diff",
+        sortingFn: "basic",
+        sortUndefined: -1,
+        accessorFn: (row) => {
+          const myAnime = userAnime[row.id];
+          if (!myAnime) {
+            return undefined;
+          }
+
+          if (!myAnime.score) {
+            return undefined;
+          }
+
+          if (row.mean === 0) {
+            return undefined;
+          }
+
+          return +(myAnime.score - row.mean).toFixed(2);
+        },
+      },
+    ];
+  }, [isLoggedIn, userAnime, isUserAnimeLoading]);
 
   const columns = useMemo<MRT_ColumnDef<Anime>[]>(
     () => [
@@ -20,12 +104,13 @@ export default function App() {
         header: "Title",
         size: 400,
         Cell: ({ renderedCellValue, row }) => (
-          <a
+          <Anchor
+            fz="sm"
             href={`https://myanimelist.net/anime/${row.original.id}`}
             target="_blank"
           >
             {renderedCellValue}
-          </a>
+          </Anchor>
         ),
       },
       {
@@ -116,7 +201,7 @@ export default function App() {
         Cell: ({ renderedCellValue }) => {
           const duration_minutes = Number(renderedCellValue);
           return `${Math.floor(duration_minutes / 60)}:${String(
-            duration_minutes % 60
+            duration_minutes % 60,
           ).padStart(2, "0")}`;
         },
       },
@@ -126,13 +211,13 @@ export default function App() {
           (
             row.genres?.map(
               (genreId) =>
-                genres?.find((genre) => genre.id === genreId)?.name ?? ""
+                genres?.find((genre) => genre.id === genreId)?.name ?? "",
             ) ?? []
           ).join(";"),
         Cell: ({ row }) => {
           return row.original.genres
             .map(
-              (genreId) => genres?.find((genre) => genre.id === genreId)?.name
+              (genreId) => genres?.find((genre) => genre.id === genreId)?.name,
             )
             .join(", ");
         },
@@ -144,7 +229,7 @@ export default function App() {
           (
             row.studios?.map(
               (studioId) =>
-                studios?.find((studio) => studio.id === studioId)?.name ?? ""
+                studios?.find((studio) => studio.id === studioId)?.name ?? "",
             ) ?? []
           ).join(", "),
         header: "Studios",
@@ -161,19 +246,20 @@ export default function App() {
             >
               {row.original.studios.map((studioId, index) => {
                 const studio = studios?.find(
-                  (studio) => studio.id === studioId
+                  (studio) => studio.id === studioId,
                 );
                 if (!studio) {
                   return null;
                 }
                 return (
-                  <a
+                  <Anchor
+                    fz="sm"
                     href={`https://myanimelist.net/anime/producer/${studio.id}`}
                     target="_blank"
                     key={studioId}
                   >
                     {studio.name}
-                  </a>
+                  </Anchor>
                 );
               })}
             </div>
@@ -184,22 +270,26 @@ export default function App() {
         accessorKey: "id",
         header: "ID",
       },
+      ...userColumns,
     ],
-    [studios, genres]
+    [studios, genres, userColumns],
   );
 
   const table = useMantineReactTable({
     data: anime ?? [],
     columns,
     state: {
-      isLoading: isAnimeLoading || isGenresLoading || isStudiosLoading,
+      isLoading:
+        isAnimeLoading ||
+        isGenresLoading ||
+        isStudiosLoading ||
+        (isLoggedIn ? isUserAnimeLoading : false),
       density: "xs",
     },
     initialState: {
       showColumnFilters: true,
       showGlobalFilter: true,
       columnPinning: {
-        // window.innerWidth < 768
         left: window.innerWidth < 768 ? [] : ["title"],
       },
     },

@@ -56,24 +56,24 @@ export type SensibleStateChangeFunctions<TData extends MRT_RowData> = Pick<
 >;
 
 export function useSensibleTableState<TData extends MRT_RowData>(
-  initialState: Partial<MRT_TableState<TData>>
+  initialState: Partial<MRT_TableState<TData>>,
 ): [SensibleState<TData>, SensibleStateChangeFunctions<TData>] {
   const [density, onDensityChange] = useState<MRT_DensityState>(
-    () => initialState.density ?? "md"
+    () => initialState.density ?? "md",
   );
   const [columnVisibility, onColumnVisibilityChange] =
     useState<MRT_VisibilityState>(() => initialState.columnVisibility ?? {});
   const [sorting, onSortingChange] = useState<MRT_SortingState>(
-    () => initialState.sorting ?? []
+    () => initialState.sorting ?? [],
   );
   const [expanded, onExpandedChange] = useState<MRT_ExpandedState>(
-    () => initialState.expanded ?? {}
+    () => initialState.expanded ?? {},
   );
   const [grouping, onGroupingChange] = useState<MRT_GroupingState>(
-    () => initialState.grouping ?? []
+    () => initialState.grouping ?? [],
   );
   const [pagination, onPaginationChange] = useState<MRT_PaginationState>(
-    () => initialState.pagination ?? { pageIndex: 0, pageSize: 10 }
+    () => initialState.pagination ?? { pageIndex: 0, pageSize: 10 },
   );
   const [rowPinning, onRowPinningChange] = useState<
     MRT_TableState<TData>["rowPinning"]
@@ -82,19 +82,19 @@ export function useSensibleTableState<TData extends MRT_RowData>(
       initialState.rowPinning ?? {
         bottom: [],
         top: [],
-      }
+      },
   );
   const [columnOrder, onColumnOrderChange] = useState<
     MRT_TableState<TData>["columnOrder"]
   >(() => initialState.columnOrder ?? []);
   const [globalFilter, onGlobalFilterChange] = useState<any>(
-    () => initialState.globalFilter
+    () => initialState.globalFilter,
   );
   const [rowSelection, onRowSelectionChange] = useState<
     MRT_TableState<TData>["rowSelection"]
   >(() => initialState.rowSelection ?? {});
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-    () => initialState.columnFilters ?? []
+    () => initialState.columnFilters ?? [],
   );
 
   const onColumnFiltersChange: SensibleStateChangeFunctions<TData>["onColumnFiltersChange"] =
@@ -115,17 +115,17 @@ export function useSensibleTableState<TData extends MRT_RowData>(
     MRT_TableState<TData>["columnPinning"]
   >(() => initialState.columnPinning ?? {});
   const [globalFilterFn, onGlobalFilterFnChange] = useState<MRT_FilterOption>(
-    () => initialState.globalFilterFn ?? "fuzzy"
+    () => initialState.globalFilterFn ?? "fuzzy",
   );
   const [columnFilterFns, onColumnFilterFnsChange] =
     useState<MRT_ColumnFilterFnsState>(
-      () => initialState.columnFilterFns ?? {}
+      () => initialState.columnFilterFns ?? {},
     );
   const [showGlobalFilter, onShowGlobalFilterChange] = useState(
-    () => initialState.showGlobalFilter ?? false
+    () => initialState.showGlobalFilter ?? false,
   );
   const [showColumnFilters, onShowColumnFiltersChange] = useState(
-    () => initialState.showColumnFilters ?? false
+    () => initialState.showColumnFilters ?? false,
   );
 
   const sensibleStateChangeFunctions =
@@ -207,6 +207,6 @@ export function useSensibleTableState<TData extends MRT_RowData>(
 
   return useMemo(
     () => [sensibleState, sensibleStateChangeFunctions],
-    [sensibleState, sensibleStateChangeFunctions]
+    [sensibleState, sensibleStateChangeFunctions],
   );
 }

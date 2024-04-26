@@ -44,7 +44,7 @@ export interface Anime {
 
 export async function getAnime() {
   const res = await fetch(
-    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/anime.csv"
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/anime.csv",
   );
   const text = await res.text();
   return parse<AnimeCsv>(text, { header: true, skipEmptyLines: true }).data.map(
@@ -58,7 +58,7 @@ export async function getAnime() {
       average_episode_duration: Number(anime.average_episode_duration),
       num_scoring_users: Number(anime.num_scoring_users),
       rank: Number(anime.rank || 99_999),
-    })
+    }),
   );
 }
 
@@ -69,7 +69,7 @@ export interface GenreCsv {
 
 export async function getGenres() {
   const res = await fetch(
-    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/genres.csv"
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/genres.csv",
   );
   const text = await res.text();
   return parse<GenreCsv>(text, { header: true, skipEmptyLines: true }).data;
@@ -82,8 +82,34 @@ export interface StudioCsv {
 
 export async function getStudios() {
   const res = await fetch(
-    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/studios.csv"
+    "https://raw.githubusercontent.com/meesvandongen/anime-dataset/main/data/studios.csv",
   );
   const text = await res.text();
   return parse<StudioCsv>(text, { header: true, skipEmptyLines: true }).data;
+}
+
+export interface AnimeListItem {
+  node: {
+    id: number;
+  };
+  list_status: {
+    status: string;
+    score: number;
+    num_episodes_watched: number;
+    is_rewatching: boolean;
+    updated_at: string;
+    start_date?: string;
+    finish_date?: string;
+  };
+}
+
+export async function getUserAnime(): Promise<
+  Record<string, AnimeListItem["list_status"]>
+> {
+  const res = await fetch("/api/animelist");
+  const json: AnimeListItem[] = await res.json();
+  return json.reduce((acc, { node, list_status }) => {
+    acc[node.id.toString()] = list_status;
+    return acc;
+  }, {} as Record<string, AnimeListItem["list_status"]>);
 }

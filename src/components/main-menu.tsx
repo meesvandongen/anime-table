@@ -1,23 +1,14 @@
+import { Menu, rem, ActionIcon, useMantineColorScheme } from "@mantine/core";
 import {
-  Menu,
-  Button,
-  rem,
-  ActionIcon,
-  useMantineColorScheme,
-} from "@mantine/core";
-import {
-  IconSettings,
-  IconMessageCircle,
-  IconPhoto,
-  IconSearch,
-  IconArrowsLeftRight,
-  IconTrash,
   IconMoon,
   IconSun,
   IconSunMoon,
   IconDots,
   IconBrandGithub,
+  IconLogin,
+  IconLogout,
 } from "@tabler/icons-react";
+import { getIsLoggedIn } from "../utils";
 
 export function MainMenu() {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
@@ -48,6 +39,28 @@ export function MainMenu() {
         >
           Github
         </Menu.Item>
+
+        {getIsLoggedIn() ? (
+          <Menu.Item
+            leftSection={
+              <IconLogout style={{ width: rem(14), height: rem(14) }} />
+            }
+            component="a"
+            href="/api/logout"
+          >
+            Logout
+          </Menu.Item>
+        ) : (
+          <Menu.Item
+            leftSection={
+              <IconLogin style={{ width: rem(14), height: rem(14) }} />
+            }
+            component="a"
+            href="/api/login"
+          >
+            Login
+          </Menu.Item>
+        )}
 
         <Menu.Divider />
 

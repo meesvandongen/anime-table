@@ -11,4 +11,12 @@ export default defineConfig({
         "A table containing all Anime from MyAnimeList, easily filterable and sortable.",
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8788",
+        changeOrigin: false,
+      },
+    },
+  },
 });
