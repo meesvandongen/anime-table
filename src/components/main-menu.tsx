@@ -58,7 +58,7 @@ export function MainMenu() {
             component="a"
             href="/api/login"
           >
-            Login
+            Login (MAL)
           </Menu.Item>
         )}
 
