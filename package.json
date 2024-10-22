@@ -8,28 +8,28 @@
     "dev:functions": "wrangler pages dev ."
   },
   "dependencies": {
-    "@mantine/core": "^7.12.2",
-    "@mantine/dates": "^7.12.2",
-    "@mantine/hooks": "^7.12.2",
-    "@tabler/icons-react": "^3.17.0",
-    "@tanstack/react-query": "^5.56.2",
+    "@mantine/core": "^7.13.3",
+    "@mantine/dates": "^7.13.3",
+    "@mantine/hooks": "^7.13.3",
+    "@tabler/icons-react": "^3.19.0",
+    "@tanstack/react-query": "^5.59.15",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "kukkii": "^0.3.0",
-    "mantine-react-table": "^2.0.0-beta.6",
+    "mantine-react-table": "^2.0.0-beta.7",
     "papaparse": "^5.4.1",
     "react": "~18.3.1",
     "react-dom": "~18.3.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240909.0",
-    "@rsbuild/core": "^1.0.4",
-    "@rsbuild/plugin-react": "^1.0.2",
-    "@types/papaparse": "^5.3.14",
-    "@types/react": "~18.3.5",
-    "@types/react-dom": "~18.3.0",
-    "wrangler": "^3.78.2",
+    "@cloudflare/workers-types": "^4.20241018.0",
+    "@rsbuild/core": "^1.0.17",
+    "@rsbuild/plugin-react": "^1.0.5",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "~18.3.11",
+    "@types/react-dom": "~18.3.1",
+    "wrangler": "^3.81.0",
     "prettier": "~3.3.3",
-    "typescript": "~5.6.2"
+    "typescript": "~5.6.3"
   }
 }
