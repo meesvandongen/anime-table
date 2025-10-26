@@ -1,5 +1,6 @@
 name = "anime-table"
-compatibility_date = "2023-01-01"
+compatibility_date = "2025-10-26"
+pages_build_output_dir="dist"
 
 [vars]
 AUTH_URL = "https://myanimelist.net/v1/oauth2/authorize"
