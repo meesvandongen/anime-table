@@ -108,8 +108,11 @@ export async function getUserAnime(): Promise<
 > {
   const res = await fetch("/api/animelist");
   const json: AnimeListItem[] = await res.json();
-  return json.reduce((acc, { node, list_status }) => {
-    acc[node.id.toString()] = list_status;
-    return acc;
-  }, {} as Record<string, AnimeListItem["list_status"]>);
+  return json.reduce(
+    (acc, { node, list_status }) => {
+      acc[node.id.toString()] = list_status;
+      return acc;
+    },
+    {} as Record<string, AnimeListItem["list_status"]>,
+  );
 }
